@@ -25,6 +25,7 @@ class Home extends React.Component {
     super(props);
     socket = io.connect("http://localhost:5000");
     socket.on("New", (res) => {
+      console.log(res)
       this.props.updateMessage(res);
     });
     this.state = { value: "" };
@@ -68,7 +69,7 @@ class Home extends React.Component {
             <p className="mt-2 ml-8 text-3xl font-semibold text-indigo-600">
               Ssup.
             </p>
-            <MyChats />
+            <MyChats socket={socket} />
           </div>
           <div className="w-3/4 h-screen p-2 bg-white">
             <div className="max-w-full h-screen rounded-2xl overflow-hidden shadow m-8 p-5  bg-gray-200 text-center flex-col">
@@ -90,7 +91,7 @@ class Home extends React.Component {
               ) : (
                 <div>
                   <div className="flex justify-center">
-                    <img src={bg} className="p-2 "></img>
+                    <img src={bg} alt="" className="p-2 "></img>
                   </div>
                   <div className="text-center justify-center p-15 text-semibold text-xl">
                     Select a Chat to start messaging

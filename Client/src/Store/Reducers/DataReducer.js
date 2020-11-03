@@ -11,9 +11,12 @@ export default (state = INITIAL_STATE, action) => {
     case "SELECT_CHAT":
       return { ...state, selectedChat: action.payload };
     case "MESSAGE":
-      var temp = state.selectedChat;
-      temp.messages.push(action.payload);
-      return { ...state, selectedChat: temp };
+      var tempArr = state.data
+      var chatToUpdate = tempArr.filter((element)=> element._id === action.payload[0])
+      chatToUpdate[0].messages.push(action.payload[1])
+      // var temp = state.selectedChat;
+      // temp.messages.push(action.payload[1]);
+      //return { ...state, selectedChat: temp };
     default:
       return state;
   }

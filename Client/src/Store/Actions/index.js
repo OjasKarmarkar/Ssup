@@ -48,7 +48,6 @@ export const selectChat = (props) => async (dispatch)=>{
 };
 
 export const updateMessage = (props)=> (dispatch)=>{
-  console.log(props);
   dispatch({
     type: "MESSAGE",
     payload: props,

@@ -20,7 +20,6 @@ const corsConfig = {
 
 io.on("connection", (socket) => {
   socket.on("message", function (room) {
-    socket.join(room.room);
     Chats.findById(room.room, function (err, chat) {
       if (err) {
         console.log(err);
@@ -32,11 +31,14 @@ io.on("connection", (socket) => {
         };
         chat.messages.push(msg);
         chat.save().then((val) => {
-          io.sockets.in(room.room).emit("New" , msg);
+          io.sockets.in(room.room).emit("New" , [room.room , msg]);
         });
       }
     });
   });
+  socket.on("subscribe" , function (room){
+    socket.join(room)
+  })
 });
 
 app.get("/", (req, res) => {

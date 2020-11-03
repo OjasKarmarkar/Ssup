@@ -28,6 +28,7 @@ class MyChats extends React.Component {
         var name = String(d.participants).replace(user._id, "");
         name = name.replace(",", "");
         const pfp = name.charAt(0).toUpperCase();
+        this.props.socket.emit("subscribe" , d._id)
         return (
           <div className="flex items-center pl-8" key={name} onClick={()=>this.selectChat(d)}>
             <div className="rounded-full h-10 w-10 bg-blue-200 text-3xl text-center">

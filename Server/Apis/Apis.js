@@ -52,11 +52,9 @@ function genHash(salt, password) {
 }
 
 login = async (req, res) => {
-  console.log(req.body);
   if (req.body.email != null && req.body.password != null) {
     User.findOne({ email: req.body.email })
       .then(async (user) => {
-        console.log(user);
         if (user) {
           comparPassword(req.body.password, user.password).then((result) => {
             if (result.isCorrect) {
@@ -103,7 +101,6 @@ register = async (req, res) => {
         return genHash(result.salt, result.password);
       })
       .then(function (result) {
-        console.log("store hash in user profile :", result);
         var newUser = new User({
           email: body.email,
           password: result.hash,
@@ -150,7 +147,6 @@ fetchChats = async (req, res) => {
       Array.prototype.push.apply(finalChats, chats);
     }).then(
       function (result){
-        console.log(finalChats)
         return res.status(200).send({data:finalChats , user:decoded});
       }
     ).catch((err)=>{

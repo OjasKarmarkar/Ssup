@@ -1,13 +1,19 @@
 import React from "react";
 import { connect } from "react-redux";
-import { fetchChats } from "../Store/Actions/index";
+import { fetchChats, sendMessage, updateMessage } from "../Store/Actions/index";
+import MyChats from "./allChats";
+import CryptoJS from "crypto-js";
+import encryptionKey from "../secret";
+import io from "socket.io-client";
+import bg from "../Images/chat.png";
+
+var socket;
 
 const mapStateToProps = (state) => {
-  console.log(state)
   return {
-    chats: state.dashboard.data,
-    user:state.dashboard.user
-  }
+    selectedChat: state.dashboard.selectedChat,
+    user: state.dashboard.user,
+  };
 };
 
 class Home extends React.Component {
@@ -15,8 +21,46 @@ class Home extends React.Component {
     this.props.fetchChats();
   }
 
+  constructor(props) {
+    super(props);
+    socket = io.connect("http://localhost:5000");
+    socket.on("New", (res) => {
+      this.props.updateMessage(res);
+    });
+    this.state = { value: "" };
+    this.handleChange = this.handleChange.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+  }
+
+  handleChange(event) {
+    this.setState({ value: event.target.value });
+  }
+
+  componentWillUnmount() {
+    socket.disconnect();
+  }
+
+  onSubmit = (event) => {
+    var ciphertext = CryptoJS.AES.encrypt(
+      this.state.value,
+      encryptionKey.encryptionKey.secret
+    ).toString();
+    this.props.sendMessage([
+      socket,
+      {
+        sender: this.props.user._id,
+        message: ciphertext,
+        room: this.props.selectedChat._id,
+      },
+    ]);
+    event.preventDefault();
+  };
+
+  renderChats() {
+    return <div></div>;
+  }
+
   render() {
-    const user = this.props.user
     return (
       <div className="bg-white h-screen">
         <div className="flex mb-4">
@@ -24,103 +68,36 @@ class Home extends React.Component {
             <p className="mt-2 ml-8 text-3xl font-semibold text-indigo-600">
               Ssup.
             </p>
-            <div className="max-w-xs rounded-2xl overflow-hidden shadow m-8 p-5  bg-gray-200 text-center flex-col">
-              <div className="rounded-full h-20 w-20 flex items-center justify-center bg-blue-200 m-auto text-3xl">
-                O
-              </div>
-              {/* <img
-                className="w-full"
-                src="/img/card-top.jpg"
-                alt="Sunset in the mountains"
-              /> */}
-              <div>
-                <div className="font-bold text-xl mb-2 flex items-center justify-center">
-                  {
-                    user==null?"Ojas K.":
-                    user.name
-                  }
-                  <svg
-                    className="h-6 w-6 m-1"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
-                </div>
-                <p className="text-gray-700 text-base">
-                  Never Settle.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center pl-4">
-              <div className="text-sm p-4">
-                <p className="text-gray-900 leading-none text-3xl font-semibold">Conversations</p>
-              </div>
-            </div>
-            <div className="flex items-center pl-8">
-              <div className="rounded-full h-10 w-10 bg-blue-200 text-3xl text-center flex justify-center mb-1">
-                J
-              </div>
-              {/* <img className="w-10 h-10 rounded-full mr-4" src="/img/jonathan.jpg" alt="Avatar of Jonathan Reinink"/> */}
-              <div className="text-sm p-4">
-                <p className="text-gray-900 leading-none">Jonathan Reinink</p>
-                <p className="text-gray-600">Aug 18</p>
-              </div>
-            </div>
-            <div className="flex items-center pl-8">
-              <div className="rounded-full h-10 w-10 bg-blue-200 text-3xl text-center flex justify-center mb-1">
-                J
-              </div>
-              {/* <img className="w-10 h-10 rounded-full mr-4" src="/img/jonathan.jpg" alt="Avatar of Jonathan Reinink"/> */}
-              <div className="text-sm p-4">
-                <p className="text-gray-900 leading-none">Jonathan Reinink</p>
-                <p className="text-gray-600">Aug 18</p>
-              </div>
-            </div>
-            <div className="flex items-center pl-8">
-              <div className="rounded-full h-10 w-10 bg-blue-200 text-3xl text-center flex justify-center mb-1">
-                J
-              </div>
-              {/* <img className="w-10 h-10 rounded-full mr-4" src="/img/jonathan.jpg" alt="Avatar of Jonathan Reinink"/> */}
-              <div className="text-sm p-4">
-                <p className="text-gray-900 leading-none">Jonathan Reinink</p>
-                <p className="text-gray-600">Aug 18</p>
-              </div>
-            </div>
-            <div className="flex items-center pl-8">
-              <div className="rounded-full h-10 w-10 bg-blue-200 text-3xl text-center flex justify-center mb-1">
-                J
-              </div>
-              {/* <img className="w-10 h-10 rounded-full mr-4" src="/img/jonathan.jpg" alt="Avatar of Jonathan Reinink"/> */}
-              <div className="text-sm p-4">
-                <p className="text-gray-900 leading-none">Jonathan Reinink</p>
-                <p className="text-gray-600">Aug 18</p>
-              </div>
-            </div>
+            <MyChats />
           </div>
           <div className="w-3/4 h-screen p-2 bg-white">
-          <div className="max-w-full h-screen rounded-2xl overflow-hidden shadow m-8 p-5  bg-gray-200 text-center flex-col">
-          
-          <input
-        className="bg-white appearance-none border-2 border-indigo-400 rounded-2xl w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-indigo-500"
-        type="text"
-        placeholder="Type Here"
-      />
-     <div className="bottom-0">Hello</div>
-          </div>
+            <div className="max-w-full h-screen rounded-2xl overflow-hidden shadow m-8 p-5  bg-gray-200 text-center flex-col">
+              {this.props.selectedChat != null ? (
+                <div>
+                  <div className="absolute bottom-0 right-30 left-10 w-3/5">
+                    <form onSubmit={this.onSubmit}>
+                      <input
+                        className="bg-white appearance-none border-2 border-indigo-400 rounded-2xl w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-indigo-500"
+                        type="text"
+                        onChange={this.handleChange}
+                        value={this.state.value}
+                        placeholder="Type Here"
+                      />
+                      <input type="submit" value="" />
+                    </form>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <div className="flex justify-center">
+                    <img src={bg} className="p-2 "></img>
+                  </div>
+                  <div className="text-center justify-center p-15 text-semibold text-xl">
+                    Select a Chat to start messaging
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -130,4 +107,6 @@ class Home extends React.Component {
 
 export default connect(mapStateToProps, {
   fetchChats,
+  sendMessage,
+  updateMessage,
 })(Home);

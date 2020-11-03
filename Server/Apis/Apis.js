@@ -137,21 +137,21 @@ logoutUser = async (req, res) => {
 
 fetchChats = async (req, res) => {
   const token = req.cookies.token;
-  console.log(token);
   if (!token)
     return res.status(401).send("Access denied...No token provided...");
   try {
     const decoded = jwt.verify(token, secret.JWT.secret);
     const email = decoded._id;
-    const myChats = [];
-    Chats.find({participants : email} , function(err , chat){
+    var finalChats = [];
+    Chats.find({participants : email} , function(err , chats){
       if(err){
         return res.status(500).send("Internal Server Error")
       }
-      myChats.push(chat);
+      Array.prototype.push.apply(finalChats, chats);
     }).then(
       function (result){
-        return res.status(200).send({data:myChats , user:decoded});
+        console.log(finalChats)
+        return res.status(200).send({data:finalChats , user:decoded});
       }
     ).catch((err)=>{
       console.log(err)
@@ -163,9 +163,31 @@ fetchChats = async (req, res) => {
   }
 };
 
+fetchSingleChat = async (req, res) => {
+  const token = req.cookies.token;
+  if (!token)
+    return res.status(401).send("Access denied...No token provided...");
+  try {
+    const decoded = jwt.verify(token, secret.JWT.secret);
+    Chats.findById(req.body.id, function (err, chat) {
+      if (err) {
+        console.log(err);
+        return res.status(500).send("Internal Server Error");
+      } else {
+        return res.status(200).send(chat);
+      }
+    });
+    
+  } catch (er) {
+    res.clearCookie("token");
+    return res.status(400).send(er.message);
+  }
+};
+
 module.exports = {
   login,
   register,
   logoutUser,
-  fetchChats
+  fetchChats,
+  fetchSingleChat
 };

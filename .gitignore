@@ -6,7 +6,7 @@ Client/node_modules
 
 #secret
 Server/Configs/secret.js
-
+Client/src/secret.js
 # testing
 Client/coverage
 

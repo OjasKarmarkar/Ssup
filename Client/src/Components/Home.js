@@ -25,7 +25,6 @@ class Home extends React.Component {
     super(props);
     socket = io.connect("http://localhost:5000");
     socket.on("New", (res) => {
-      console.log(res)
       this.props.updateMessage(res);
     });
     this.state = { value: "" };
@@ -54,11 +53,30 @@ class Home extends React.Component {
         room: this.props.selectedChat._id,
       },
     ]);
+   this.setState({
+     value:""
+   })
     event.preventDefault();
   };
 
   renderChats() {
-    return <div></div>;
+    const messages = this.props.selectedChat.messages
+    const listItems = messages.map((d) => {
+      var bytes = CryptoJS.AES.decrypt(d.message, encryptionKey.encryptionKey.secret);
+      var msg = bytes.toString(CryptoJS.enc.Utf8);
+     //console.log(msg)
+     if(d.sender===this.props.user._id){
+      return (
+        <div className="text-right p-2"><p className='bg-indigo-400 p-2 rounded-3xl'>{msg}</p></div>
+      );
+     }else{
+      return (
+        <div className="text-left p-2"><p  className='bg-indigo-400 p-2 rounded-3xl'>{msg}</p></div>
+      );
+     }
+     
+    });
+    return(<div className="overflow-y-auto">{listItems}</div>)
   }
 
   render() {
@@ -75,7 +93,8 @@ class Home extends React.Component {
             <div className="max-w-full h-screen rounded-2xl overflow-hidden shadow m-8 p-5  bg-gray-200 text-center flex-col">
               {this.props.selectedChat != null ? (
                 <div>
-                  <div className="absolute bottom-0 right-30 left-10 w-3/5">
+                {this.renderChats()}
+                  <div className="absolute bottom-0 right-30 left-10 w-3/5 z-20">
                     <form onSubmit={this.onSubmit}>
                       <input
                         className="bg-white appearance-none border-2 border-indigo-400 rounded-2xl w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-indigo-500"

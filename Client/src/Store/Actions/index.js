@@ -38,12 +38,12 @@ export const signOut = () => {
 };
 
 export const selectChat = (props) => async (dispatch)=>{
-  const response = await axios.post("http://localhost:5000/api/fetchSingle",{
-   id:props._id
-  });
+  // const response = await axios.post("http://localhost:5000/api/fetchSingle",{
+  //  id:props._id
+  // });
   dispatch({
     type: "SELECT_CHAT",
-    payload: response.data,
+    payload: props,
   });
 };
 

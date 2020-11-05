@@ -11,7 +11,7 @@ export default (state = INITIAL_STATE, action) => {
     case "SELECT_CHAT":
       return { ...state, selectedChat: action.payload };
     case "MESSAGE":
-      var tempArr = state.data;
+      var tempArr = [...state.data];
       var chatToUpdate = tempArr.filter(
         (element) => element._id === action.payload[0]
       );

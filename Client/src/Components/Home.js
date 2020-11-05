@@ -13,12 +13,17 @@ const mapStateToProps = (state) => {
   return {
     selectedChat: state.dashboard.selectedChat,
     user: state.dashboard.user,
+    data: state.dashboard.data,
   };
 };
 
 class Home extends React.Component {
   componentDidMount() {
     this.props.fetchChats();
+  }
+
+  UNSAFE_componentWillReceiveProps() {
+    this.setState();
   }
 
   constructor(props) {
@@ -53,30 +58,36 @@ class Home extends React.Component {
         room: this.props.selectedChat._id,
       },
     ]);
-   this.setState({
-     value:""
-   })
+    this.setState({
+      value: "",
+    });
     event.preventDefault();
   };
 
   renderChats() {
-    const messages = this.props.selectedChat.messages
+    const messages = this.props.selectedChat.messages;
     const listItems = messages.map((d) => {
-      var bytes = CryptoJS.AES.decrypt(d.message, encryptionKey.encryptionKey.secret);
+      var bytes = CryptoJS.AES.decrypt(
+        d.message,
+        encryptionKey.encryptionKey.secret
+      );
       var msg = bytes.toString(CryptoJS.enc.Utf8);
-     //console.log(msg)
-     if(d.sender===this.props.user._id){
-      return (
-        <div className="text-right p-2"><p className='bg-indigo-400 p-2 rounded-3xl'>{msg}</p></div>
-      );
-     }else{
-      return (
-        <div className="text-left p-2"><p  className='bg-indigo-400 p-2 rounded-3xl'>{msg}</p></div>
-      );
-     }
-     
+      //console.log(msg)
+      if (d.sender === this.props.user._id) {
+        return (
+          <div key={d.message} className="text-right p-2">
+            <p className="bg-indigo-400 p-2 rounded-3xl">{msg}</p>
+          </div>
+        );
+      } else {
+        return (
+          <div className="text-left p-2" key={d.message}>
+            <p className="bg-indigo-400 p-2 rounded-3xl">{msg}</p>
+          </div>
+        );
+      }
     });
-    return(<div className="overflow-y-auto">{listItems}</div>)
+    return <div>{listItems}</div>;
   }
 
   render() {
@@ -90,10 +101,10 @@ class Home extends React.Component {
             <MyChats socket={socket} />
           </div>
           <div className="w-3/4 h-screen p-2 bg-white">
-            <div className="max-w-full h-screen rounded-2xl overflow-hidden shadow m-8 p-5  bg-gray-200 text-center flex-col">
+            <div className="max-w-full h-screen rounded-2xl overflow-hidden shadow m-8 p-5  bg-gray-200 text-center flex-col overflow-y-scroll">
               {this.props.selectedChat != null ? (
                 <div>
-                {this.renderChats()}
+                  {this.renderChats()}
                   <div className="absolute bottom-0 right-30 left-10 w-3/5 z-20">
                     <form onSubmit={this.onSubmit}>
                       <input

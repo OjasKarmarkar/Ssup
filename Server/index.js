@@ -6,7 +6,8 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const apiRoutes = require("../Server/Apis/Routers");
 const mongoose = require("mongoose");
-const keys = require("./Configs/secret");
+// const keys = require("./Configs/secret");
+require('dotenv').config()
 const port = 5000;
 const app = express();
 const server = http.createServer(app);
@@ -48,12 +49,12 @@ app.get("/", (req, res) => {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("./Public"));
-app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+app.use(cors({ credentials: true, origin: "https://ssup.vercel.app" }));
 app.options("*", cors(corsConfig));
 app.use(cookieParser());
 app.use("/api", apiRoutes);
 
-const db = keys.mongodb.dbURI;
+const db = process.env.DB_HOST
 
 mongoose
   .connect(db, {

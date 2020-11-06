@@ -1,4 +1,4 @@
-const secret = require("../Configs/secret");
+require('dotenv').config()
 User = require("../Models/User");
 Chats = require("../Models/Chats")
 bcrypt = require("bcryptjs");
@@ -63,7 +63,7 @@ login = async (req, res) => {
                     _id: user.email,
                     name: user.name,
                   },
-                  secret.JWT.secret,
+                  process.env.SECRET_KEY,
                   { expiresIn: "15m" }
                 );
                 return res
@@ -137,7 +137,7 @@ fetchChats = async (req, res) => {
   if (!token)
     return res.status(401).send("Access denied...No token provided...");
   try {
-    const decoded = jwt.verify(token, secret.JWT.secret);
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
     const email = decoded._id;
     var finalChats = [];
     Chats.find({participants : email} , function(err , chats){
@@ -164,7 +164,7 @@ fetchSingleChat = async (req, res) => {
   if (!token)
     return res.status(401).send("Access denied...No token provided...");
   try {
-    const decoded = jwt.verify(token, secret.JWT.secret);
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
     Chats.findById(req.body.id, function (err, chat) {
       if (err) {
         console.log(err);

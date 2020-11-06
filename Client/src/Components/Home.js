@@ -3,9 +3,9 @@ import { connect } from "react-redux";
 import { fetchChats, sendMessage, updateMessage } from "../Store/Actions/index";
 import MyChats from "./allChats";
 import CryptoJS from "crypto-js";
-import encryptionKey from "../secret";
 import io from "socket.io-client";
 import bg from "../Images/chat.png";
+const { REACT_APP_MY_ENV } = process.env;
 
 var socket;
 
@@ -48,7 +48,7 @@ class Home extends React.Component {
   onSubmit = (event) => {
     var ciphertext = CryptoJS.AES.encrypt(
       this.state.value,
-      encryptionKey.encryptionKey.secret
+      REACT_APP_MY_ENV
     ).toString();
     this.props.sendMessage([
       socket,
@@ -69,7 +69,7 @@ class Home extends React.Component {
     const listItems = messages.map((d) => {
       var bytes = CryptoJS.AES.decrypt(
         d.message,
-        encryptionKey.encryptionKey.secret
+        REACT_APP_MY_ENV
       );
       var msg = bytes.toString(CryptoJS.enc.Utf8);
       //console.log(msg)

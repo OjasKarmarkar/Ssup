@@ -49,7 +49,7 @@ app.get("/", (req, res) => {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("./Public"));
-app.use(cors({ credentials: true, origin: "https://ssup.vercel.app" }));
+app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 app.options("*", cors(corsConfig));
 app.use(cookieParser());
 app.use("/api", apiRoutes);

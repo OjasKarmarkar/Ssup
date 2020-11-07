@@ -180,10 +180,67 @@ fetchSingleChat = async (req, res) => {
   }
 };
 
+getUsers = async (req, res) => {
+  const token = req.cookies.token;
+  if (!token)
+    return res.status(401).send("Access denied...No token provided...");
+  try {
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    var users = [];
+    User.find({} , function(err , user){
+      if(err){
+        return res.status(500).send("Internal Server Error")
+      }
+      user.forEach((userObj , i)=>{
+        users.push(userObj.email)
+      })
+    }).then( function (result){
+      return res.status(200).send({users:users});
+    }).catch((err)=>{
+      console.log(err)
+    })
+    
+  } catch (er) {
+    res.clearCookie("token");
+    return res.status(400).send(er.message);
+  }
+};
+
+newChat = async (req, res) => {
+  const token = req.cookies.token;
+  if (!token)
+    return res.status(401).send("Access denied...No token provided...");
+  try {
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    var chats = new Chats({
+      participants: req.body.participants,
+      chatType:"S"
+    });
+    chats.save(function (err) {
+      if (!err) {
+        return res.send({ status: "Chat Created" });
+      } else {
+        if (err.name == "ValidationError") {
+          res.statusCode = 400;
+          res.send({ error: "Bad Request" });
+        } else {
+          res.statusCode = 500;
+          res.send({ error: "Internal Server Error" });
+        }
+      }
+    });
+  } catch (er) {
+    res.clearCookie("token");
+    return res.status(400).send(er.message);
+  }
+};
+
 module.exports = {
   login,
   register,
   logoutUser,
   fetchChats,
-  fetchSingleChat
+  fetchSingleChat,
+  getUsers,
+  newChat
 };

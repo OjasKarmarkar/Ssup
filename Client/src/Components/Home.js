@@ -5,8 +5,10 @@ import MyChats from "./allChats";
 import CryptoJS from "crypto-js";
 import io from "socket.io-client";
 import bg from "../Images/chat.png";
+import water from "../Sound/water.wav";
 const { REACT_APP_MY_ENV } = process.env;
 
+const notiAudio = new Audio(water);
 var socket;
 
 const mapStateToProps = (state) => {
@@ -17,13 +19,20 @@ const mapStateToProps = (state) => {
   };
 };
 
+
 class Home extends React.Component {
+
   componentDidMount() {
     this.props.fetchChats();
   }
 
+  scrollToBottom = () => {
+    //messagesEnd.scrollIntoView({ behavior: "smooth" });
+  };
+
   UNSAFE_componentWillReceiveProps() {
     this.setState();
+    this.scrollToBottom();
   }
 
   constructor(props) {
@@ -31,6 +40,7 @@ class Home extends React.Component {
     socket = io.connect("http://localhost:5000");
     socket.on("New", (res) => {
       this.props.updateMessage(res);
+      notiAudio.play()
     });
     this.state = { value: "" };
     this.handleChange = this.handleChange.bind(this);
@@ -67,10 +77,7 @@ class Home extends React.Component {
   renderChats() {
     const messages = this.props.selectedChat.messages;
     const listItems = messages.map((d) => {
-      var bytes = CryptoJS.AES.decrypt(
-        d.message,
-        REACT_APP_MY_ENV
-      );
+      var bytes = CryptoJS.AES.decrypt(d.message, REACT_APP_MY_ENV);
       var msg = bytes.toString(CryptoJS.enc.Utf8);
       //console.log(msg)
       if (d.sender === this.props.user._id) {
@@ -87,7 +94,11 @@ class Home extends React.Component {
         );
       }
     });
-    return <div>{listItems}</div>;
+    return (
+      <div>
+        {listItems}
+      </div>
+    );
   }
 
   render() {

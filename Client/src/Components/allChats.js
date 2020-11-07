@@ -11,8 +11,8 @@ const mapStateToProps = (state) => {
     user: state.dashboard.user,
   };
 };
-
 class MyChats extends React.Component {
+
   selectChat = (props) => {
     this.props.selectChat(props);
   };
@@ -28,14 +28,24 @@ class MyChats extends React.Component {
   };
 
   newChat = async (props) => {
-    const response = await axios.post("http://localhost:5000/api/newChat", {
-      participants: props,
-    });
-    console.log(response);
-    if (response.status === 200) {
-      this.setState({ modalName: "" });
-      history.push("/dashboard");
-    }
+    var e1 = props[0];
+    var e2 = props[1];
+    var chats = this.props.chats
+    chats.forEach(async(chat , i)=>{
+      var participants = chat.participants
+      if(participants.includes(e1) && participants.includes(e2)){
+        history.push("/dashboard");
+      }else{
+        const response = await axios.post("http://localhost:5000/api/newChat", {
+          participants: props,
+        });
+        if (response.status === 200) {
+          this.setState({ modalName: "" });
+          history.push("/dashboard");
+        }
+      }
+    })
+   
   };
 
   showModal = () => {

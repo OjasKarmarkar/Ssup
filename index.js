@@ -4,7 +4,7 @@ const socketio = require("socket.io");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const apiRoutes = require("./Apis/Routers");
+const apiRoutes = require("../Server/Apis/Routers");
 const mongoose = require("mongoose");
 // const keys = require("./Configs/secret");
 require('dotenv').config()
@@ -13,6 +13,11 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 const Chats = require("./Models/Chats");
+
+const corsConfig = {
+  origin: true,
+  credentials: true,
+};
 
 io.on("connection", (socket) => {
   socket.on("message", function (room) {
@@ -44,6 +49,7 @@ app.get("/", (req, res) => {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("./Public"));
+app.options("*", cors(corsConfig));
 app.use(cors({methods: "GET,HEAD,PUT,PATCH,POST,DELETE", credentials: true, origin: "https://ssup.vercel.app" }));
 app.use(cookieParser());
 app.use("/api", apiRoutes);

@@ -14,6 +14,11 @@ const server = http.createServer(app);
 const io = socketio(server);
 const Chats = require("./Models/Chats");
 
+const corsConfig = {
+  origin: true,
+  credentials: true,
+};
+
 io.on("connection", (socket) => {
   socket.on("message", function (room) {
     Chats.findById(room.room, function (err, chat) {
@@ -44,7 +49,8 @@ app.get("/", (req, res) => {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("./Public"));
-app.use(cors({methods: "GET,HEAD,PUT,PATCH,POST,DELETE", credentials: true, origin: "https://ssup.vercel.app" }));
+app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+app.options("*", cors(corsConfig));
 app.use(cookieParser());
 app.use("/api", apiRoutes);
 

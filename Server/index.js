@@ -8,7 +8,7 @@ const apiRoutes = require("../Server/Apis/Routers");
 const mongoose = require("mongoose");
 // const keys = require("./Configs/secret");
 require('dotenv').config()
-const port = 5000;
+const port = process.env.PORT || 5000;
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);

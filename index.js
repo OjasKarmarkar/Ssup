@@ -4,7 +4,7 @@ const socketio = require("socket.io");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const apiRoutes = require("../Server/Apis/Routers");
+const apiRoutes = require("./Apis/Routers");
 const mongoose = require("mongoose");
 // const keys = require("./Configs/secret");
 require('dotenv').config()

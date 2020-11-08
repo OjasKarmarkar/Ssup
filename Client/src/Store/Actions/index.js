@@ -3,7 +3,7 @@ import history from '../../history';
 axios.defaults.withCredentials = true;
 
 export const signIn = (id, pwd) => async (dispatch) => {
-  const response = await axios.post("http://localhost:5000/api/login", {
+  const response = await axios.post("https://ssup-server.herokuapp.com/api/login", {
     email: id,
     password: pwd,
   });
@@ -22,7 +22,7 @@ export const sendMessage = (data) => async (dispatch) => {
 
 export const fetchChats = () => async (dispatch) => {
   
-  const response = await axios.get("http://localhost:5000/api/dashboard");
+  const response = await axios.get("https://ssup-server.herokuapp.com/api/dashboard");
   dispatch({
     type: "DATA",
     payload: response.data,
@@ -38,7 +38,7 @@ export const signOut = () => {
 };
 
 export const selectChat = (props) => async (dispatch)=>{
-  // const response = await axios.post("http://localhost:5000/api/fetchSingle",{
+  // const response = await axios.post("https://ssup-server.herokuapp.com/api/fetchSingle",{
   //  id:props._id
   // });
   dispatch({
@@ -55,7 +55,7 @@ export const updateMessage = (props)=> (dispatch)=>{
 };
 
 export const register = (props) => async (dispatch) => {
-  const response = await axios.post("http://localhost:5000/api/register",{
+  const response = await axios.post("https://ssup-server.herokuapp.com/api/register",{
     email: props.email,
     name:props.name,
     password: props.password,

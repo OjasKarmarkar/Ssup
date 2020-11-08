@@ -23,7 +23,7 @@ class MyChats extends React.Component {
   }
 
   fetchUsers = async () => {
-    const response = await axios.get("http://localhost:5000/api/users");
+    const response = await axios.get("https://ssup-server.herokuapp.com/api/users");
     this.setState({ users: response.data.users });
   };
 
@@ -36,7 +36,7 @@ class MyChats extends React.Component {
       if(participants.includes(e1) && participants.includes(e2)){
         history.push("/dashboard");
       }else{
-        const response = await axios.post("http://localhost:5000/api/newChat", {
+        const response = await axios.post("https://ssup-server.herokuapp.com/api/newChat", {
           participants: props,
         });
         if (response.status === 200) {

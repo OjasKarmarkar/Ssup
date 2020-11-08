@@ -37,7 +37,7 @@ class Home extends React.Component {
 
   constructor(props) {
     super(props);
-    socket = io.connect("http://localhost:5000");
+    socket = io.connect("https://ssup-server.herokuapp.com");
     socket.on("New", (res) => {
       this.props.updateMessage(res);
       notiAudio.play()
